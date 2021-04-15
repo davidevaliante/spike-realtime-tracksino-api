@@ -1,0 +1,20 @@
+config:
+  target: "http://127.0.0.1:5001"
+  socketio:
+    transports: ["websocket"]
+  engines:
+   socketio-v3: {}
+  phases:
+    - duration: 10 # Run scenario for 10 seconds
+      arrivalCount: 3000 # Create 20 virtual users per scenario
+scenarios:
+  - name: My first scenario
+    engine: socketio-v3
+    flow:
+      - loop:
+          - emit:
+              channel: "message"
+              data: "hello world!"
+          - think: 1
+        count: 50
+      - think : 500
