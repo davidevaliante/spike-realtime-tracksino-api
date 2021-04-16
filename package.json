@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "npm install --only=dev && tsc",
+    "build": "tsc",
     "start" : "node dist/index.js",
     "watch": "tsc -w",
     "dev": "nodemon dist/index.js"
