@@ -24,4 +24,6 @@ export const getStatsInTheLastHourse = async (hoursToCheck : number) => {
             spinsInTimeFrame.filter(it => it.slotResultSymbol === symbol.toString()).length
         ))
     )
+
+    return stats
 }
