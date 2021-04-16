@@ -5,6 +5,7 @@ import { CrazyTimeSymbol } from '../mongoose-models/crazy-time/Symbols'
 import { CrazyTimeStats, SymbolStats } from './../mongoose-models/crazy-time/Stats';
 const router = express.Router()
 import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
+import { geLatestSpins, getStatsInTheLastHourse } from './get'
 
 router.post('/write-spins', async (request : Request, response : Response) => {
     try{
@@ -33,16 +34,17 @@ router.get('/get-all', async (request : Request, response : Response) => {
 
 router.get('/get-latest/:count', async (request : Request, response : Response) => {
     try {
-        const {count} = request.params
-        const allSpins = await SpinModel.find().limit(parseInt(count)).sort({'timeOfSpin' : -1})
-        response.send({allSpins})
+        const { count } = request.params
+        const latestSpins = await geLatestSpins(parseInt(count))
+        response.send({
+            latestSpins
+        })
     } catch (error) {
         response.send({ error })
     }
 })
 
 router.get('/get-hour', async (request : Request, response : Response) => {
-
     try {
         const now = new Date().getTime() + 60 * 60 * 2 * 1000
         const timeSince = now - 1 * 60 * 60 * 1000
@@ -55,25 +57,8 @@ router.get('/get-hour', async (request : Request, response : Response) => {
 router.get('/stats-in-the-last-hours/:hours', async (request : Request, response : Response) => {
     try {
         const { hours } = request.params
-        const now = new Date().getTime() + 60 * 60 * 2 * 1000
-        const timeSince = now - parseInt(hours) * 60 * 60 * 1000
-        const spinsInTimeFrame = await SpinModel.where('timeOfSpin').gte(timeSince).sort({'timeOfSpin' : -1}) as Spin[]
-
-        const totalSpins = spinsInTimeFrame.length
-
-        
-
-        const stats = new CrazyTimeStats(
-            timeSince,
-            totalSpins,
-            Object.values(CrazyTimeSymbol).filter(it => typeof(it) !== 'number').map((symbol : CrazyTimeSymbol) => new SymbolStats(
-                symbol,
-                spinsInTimeFrame.filter(it => it.slotResultSymbol === symbol.toString()).length * 100 / totalSpins,
-                0,
-                spinsInTimeFrame.filter(it => it.slotResultSymbol === symbol.toString()).length
-            ))
-        )
-        response.send({timeSince, stats, spinsInTimeFrame})
+        const stats = await getStatsInTheLastHourse(parseInt(hours))
+        response.send({ stats })
     } catch (error) {
         response.send({ error })
     }

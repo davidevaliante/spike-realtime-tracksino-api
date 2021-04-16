@@ -23,9 +23,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', crazyTimeApi)
 
+let hearhBeat = 0
 
 app.listen(PORT, async () => {    
     console.log(`> Realtime API running on port ${PORT}`)
+
     try {
         mongoose.connect(process.env.MONGO_CONNECTION_STRING, {useNewUrlParser:true, useUnifiedTopology:true})
         const mongoDb = mongoose.connection
@@ -33,7 +35,8 @@ app.listen(PORT, async () => {
         mongoDb.once('open', () => console.log('connected to Mongo DB'))
 
         SpinModel.watch().on('change', change => {
-            console.log(change)
+            hearhBeat++
+            console.log(hearhBeat)
         })
     } catch (error) {
         console.error(error)
