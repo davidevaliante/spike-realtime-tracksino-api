@@ -6,7 +6,7 @@ import { CrazyTimeStats, SymbolStats } from './../mongoose-models/crazy-time/Sta
 const router = express.Router()
 import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
 
-router.post('/write-spin', async (request : Request, response : Response) => {
+router.post('/write-spins', async (request : Request, response : Response) => {
     try{
         const list = request.body
         const bulkUpdate = await SpinModel.bulkWrite(list.map((spin : Spin) => ({
