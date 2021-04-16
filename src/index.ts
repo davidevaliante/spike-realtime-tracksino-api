@@ -21,7 +21,7 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/crazy-time', crazyTimeApi)
+app.use('/api', crazyTimeApi)
 
 
 app.listen(PORT, async () => {    
