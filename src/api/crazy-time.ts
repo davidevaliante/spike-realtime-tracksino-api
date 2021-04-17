@@ -5,7 +5,7 @@ import { CrazyTimeSymbol } from '../mongoose-models/crazy-time/Symbols'
 import { CrazyTimeStats, SymbolStats } from './../mongoose-models/crazy-time/Stats';
 const router = express.Router()
 import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
-import { geLatestSpins, getStatsInTheLastHourse } from './get'
+import { getLatestSpins, getStatsInTheLastHours } from './get'
 
 router.post('/write-spins', async (request : Request, response : Response) => {
     try{
@@ -35,7 +35,7 @@ router.get('/get-all', async (request : Request, response : Response) => {
 router.get('/get-latest/:count', async (request : Request, response : Response) => {
     try {
         const { count } = request.params
-        const latestSpins = await geLatestSpins(parseInt(count))
+        const latestSpins = await getLatestSpins(parseInt(count))
         response.send({
             latestSpins
         })
@@ -57,7 +57,7 @@ router.get('/get-hour', async (request : Request, response : Response) => {
 router.get('/stats-in-the-last-hours/:hours', async (request : Request, response : Response) => {
     try {
         const { hours } = request.params
-        const stats = await getStatsInTheLastHourse(parseInt(hours))
+        const stats = await getStatsInTheLastHours(parseInt(hours))
         response.send({ stats })
     } catch (error) {
         response.send({ error })

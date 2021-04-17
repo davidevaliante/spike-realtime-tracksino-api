@@ -8,6 +8,8 @@ import cors from 'cors'
 import cron from 'node-cron'
 import bodyParser from 'body-parser'
 import { SpinModel } from './mongoose-models/crazy-time/Spin'
+import { getLatestSpins, getStatsInTheLastHours } from './api/get'
+import { TimeFrame, timeFrameValueToHours } from './models/TimeFrame'
 
 dotenv.config()
 
@@ -23,8 +25,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', crazyTimeApi)
 
-let hearhBeat = 0
-
 app.listen(PORT, async () => {    
     console.log(`> Realtime API running on port ${PORT}`)
 
@@ -33,11 +33,6 @@ app.listen(PORT, async () => {
         const mongoDb = mongoose.connection
         mongoDb.on('error', console.error.bind(console, 'database connection error'))
         mongoDb.once('open', () => console.log('connected to Mongo DB'))
-
-        SpinModel.watch().on('change', change => {
-            hearhBeat++
-            console.log(hearhBeat)
-        })
     } catch (error) {
         console.error(error)
     }
@@ -55,39 +50,46 @@ const io = new Server(httpServer, {
 })
 
 io.on('connection', (socket: Socket) => {
+    let currentRoom = socket.id
     clientsCount++
     console.log(`${clientsCount} clients connected`)
 
-    console.log(`${socket.id} is in rooms -> ${[...socket.rooms.values()]}`)
-
-    socket.emit('crazy-time-join')
-
-    socket.emit('event', 'hello')
-
-    socket.on('crazy-time-join', (data, callback) => {
-        console.log(data)
-        socket.join('crazy-time')
-        socket.leave(socket.id)
-        console.log(`${socket.id} is in rooms -> ${[...socket.rooms.values()]}`)
+    Object.values(TimeFrame).forEach(tf => {
+        socket.on(tf, data => {
+            console.log(`${socket.id} joining ${tf} and leaving ${currentRoom}`)
+            socket.join(tf)
+            socket.leave(currentRoom)
+            currentRoom=tf
+        })
     })
 
+  
     socket.on('disconnect', (reason : string) =>{
         clientsCount--
         console.log(`${clientsCount} clients connected`)
     })
 
     socket.on('message', (data) => {
-        console.log(data)
+        console.log(data, `from ${socket.id}`)
     })
 })
 
-cron.schedule('*/5 * * * * *', () => {
-    io.to('crazy-time').emit('update',{
-        hello : 'from crazy time api'
+Object.values(TimeFrame).forEach(tf => {
+    cron.schedule('*/5 * * * * *', async () => {
+        const spins = await getLatestSpins(25)
+        const stats = await getStatsInTheLastHours(timeFrameValueToHours(tf))
+        io.to(tf).emit(tf, {
+            timeFrame : tf,
+            spins,
+            stats
+        })
     })
 })
+
+
 
 
 httpServer.listen(process.env.SOCKET_PORT, () =>{
     console.log(`> Socket initialized on port ${process.env.SOCKET_PORT}`)
 })
+
