@@ -25,18 +25,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', crazyTimeApi)
 
-app.listen(PORT, async () => {    
-    console.log(`> Realtime API running on port ${PORT}`)
-
-    try {
-        mongoose.connect(process.env.MONGO_CONNECTION_STRING, {useNewUrlParser:true, useUnifiedTopology:true})
-        const mongoDb = mongoose.connection
-        mongoDb.on('error', console.error.bind(console, 'database connection error'))
-        mongoDb.once('open', () => console.log('connected to Mongo DB'))
-    } catch (error) {
-        console.error(error)
-    }
-})
 
 const httpServer = createServer(app)
 
@@ -90,7 +78,17 @@ Object.values(TimeFrame).forEach(tf => {
 
 
 
-httpServer.listen(process.env.SOCKET_PORT, () =>{
-    console.log(`> Socket initialized on port ${process.env.SOCKET_PORT}`)
+httpServer.listen(process.env.PORT, () =>{
+    console.log(`> Realtime API running on port ${PORT}`)
+
+    try {
+        mongoose.connect(process.env.MONGO_CONNECTION_STRING, {useNewUrlParser:true, useUnifiedTopology:true})
+        const mongoDb = mongoose.connection
+        mongoDb.on('error', console.error.bind(console, 'database connection error'))
+        mongoDb.once('open', () => console.log('connected to Mongo DB'))
+    } catch (error) {
+        console.error(error)
+    }
+    console.log(`> Socket initialized on port ${process.env.PORT}`)
 })
 
