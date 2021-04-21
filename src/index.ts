@@ -78,6 +78,7 @@ Object.values(TimeFrame).forEach(tf => {
     cron.schedule('*/5 * * * * *', async () => {
         const spins = await getLatestSpins(25)
         const stats = await getStatsInTheLastHours(timeFrameValueToHours(tf))
+
         io.to(tf).emit(tf, {
             timeFrame : tf,
             spins,

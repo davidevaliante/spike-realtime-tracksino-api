@@ -8,8 +8,11 @@ export const getLatestSpins = async (count : number) => {
 }
 
 export const getStatsInTheLastHours = async (hoursToCheck : number) => {
-    const now = new Date().getTime() + 60 * 60 * 2 * 1000
-    const timeSince = now - hoursToCheck * 60 * 60 * 1000
+
+    const now = new Date().getTime()
+
+    const timeSince = now - hoursToCheck * 60 * 60 * 1000 - 5 * 1000
+
     const spinsInTimeFrame = await SpinModel.where('timeOfSpin').gte(timeSince).sort({'timeOfSpin' : -1}) as Spin[]
 
     const totalSpins = spinsInTimeFrame.length

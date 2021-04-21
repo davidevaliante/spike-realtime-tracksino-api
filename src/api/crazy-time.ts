@@ -46,8 +46,8 @@ router.get('/get-latest/:count', async (request : Request, response : Response) 
 
 router.get('/get-hour', async (request : Request, response : Response) => {
     try {
-        const now = new Date().getTime() + 60 * 60 * 2 * 1000
-        const timeSince = now - 1 * 60 * 60 * 1000
+        const now = new Date().getTime()
+        const timeSince = now - 1 * 60 * 60 * 1000 - 5 * 1000
         const spinsInTimeFrame = await SpinModel.where('timeOfSpin').gte(timeSince).sort({'timeOfSpin' : -1}) as Spin[]
         response.send({spinsInTimeFrame})
     } catch (error) {
