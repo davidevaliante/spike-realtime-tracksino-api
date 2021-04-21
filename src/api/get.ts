@@ -20,12 +20,17 @@ export const getStatsInTheLastHours = async (hoursToCheck : number) => {
     const stats = new CrazyTimeStats(
         timeSince,
         totalSpins,
-        Object.values(CrazyTimeSymbol).filter(it => typeof(it) !== 'number').map((symbol : CrazyTimeSymbol) => new SymbolStats(
-            symbol,
-            spinsInTimeFrame.filter(it => it.spinResultSymbol === symbol.toString()).length * 100 / totalSpins,
-            0,
-            spinsInTimeFrame.filter(it => it.spinResultSymbol === symbol.toString()).length
-        ))
+        Object.values(CrazyTimeSymbol).filter(it => typeof(it) !== 'number').map((symbol : CrazyTimeSymbol) => {
+
+            const timeSince = spinsInTimeFrame.map(s => s.spinResultSymbol).indexOf(symbol.toString())
+
+            return new SymbolStats(
+                symbol,
+                spinsInTimeFrame.filter(it => it.spinResultSymbol === symbol.toString()).length * 100 / totalSpins,
+                timeSince != -1 ? timeSince : totalSpins,
+                spinsInTimeFrame.filter(it => it.spinResultSymbol === symbol.toString()).length
+            )
+        })
     )
 
     return stats
