@@ -5,7 +5,7 @@ import { CrazyTimeSymbol } from '../mongoose-models/crazy-time/Symbols'
 import { CrazyTimeStats, SymbolStats } from './../mongoose-models/crazy-time/Stats';
 const router = express.Router()
 import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
-import { getLatestSpins, getStatsInTheLastHours } from './get'
+import { getInitialPageData, getLatestSpins, getStatsInTheLastHours } from './get'
 
 router.post('/write-spins', async (request : Request, response : Response) => {
     try{
@@ -68,6 +68,19 @@ router.get('/delete-all', async (request : Request, response : Response) => {
     const deleted = await SpinModel.deleteMany({})
     const remaining = await SpinModel.find()
     response.send({deleted,remaining})
+})
+
+router.get('/data-for-the-last-hours/:hours', async (request : Request, response : Response) => {
+    try {
+        const { hours } = request.params
+        const {stats, spinsInTimeFrame} = await getInitialPageData(parseInt(hours))
+        response.send({
+            stats,
+            spinsInTimeFrame
+        })
+    } catch (error) {
+        response.send({ error })
+    }
 })
 
 export default router
