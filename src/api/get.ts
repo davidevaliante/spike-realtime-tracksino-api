@@ -13,18 +13,18 @@ export const getStatsInTheLastHours = async (hoursToCheck : number) => {
 
     const timeSince = now - hoursToCheck * 60 * 60 * 1000 - 5 * 1000
 
-    const queryStart = new Date().getTime()
+    // const queryStart = new Date().getTime()
 
     // const spinsInTimeFrame = await SpinModel.where('timeOfSpin').gte(timeSince).sort({'timeOfSpin' : -1}) as Spin[]
 
     const spinsInTimeFrame = await SpinModel.find({timeOfSpin:{$gte:timeSince}}, 'spinResultSymbol').sort({'timeOfSpin' : -1}) as Spin[]
 
 
-    const queryEnd = new Date().getTime()
+    // const queryEnd = new Date().getTime()
 
     const totalSpins = spinsInTimeFrame.length
 
-    console.log(`Query took ${queryEnd - queryStart} to execute for ${totalSpins}`)
+    // console.log(`Query took ${queryEnd - queryStart} to execute for ${totalSpins}`)
 
     
     const stats = new CrazyTimeStats(
@@ -52,18 +52,18 @@ export const getInitialPageData = async (hoursToCheck : number) => {
 
     const timeSince = now - hoursToCheck * 60 * 60 * 1000 - 5 * 1000
 
-    const queryStart = new Date().getTime()
+    // const queryStart = new Date().getTime()
 
     // const spinsInTimeFrame = await SpinModel.where('timeOfSpin').gte(timeSince).sort({'timeOfSpin' : -1}) as Spin[]
 
     const spinsInTimeFrame = await SpinModel.find({timeOfSpin:{$gte:timeSince}}, ).sort({'timeOfSpin' : -1}) as Spin[]
 
 
-    const queryEnd = new Date().getTime()
+    // const queryEnd = new Date().getTime()
 
     const totalSpins = spinsInTimeFrame.length
 
-    console.log(`Query took ${queryEnd - queryStart} to execute for ${totalSpins}`)
+    // console.log(`Query took ${queryEnd - queryStart} to execute for ${totalSpins}`)
 
     
     const stats = new CrazyTimeStats(
