@@ -32,7 +32,7 @@ let clientsCount = 0
 
 const io = new Server(httpServer, {
     cors: {
-        origin: ['http://localhost:3000', 'https://spikemultilanguage.toply.info', 'https://www.spikeslot.com/', 'https://spikeslot.com'],
+        origin: ['http://localhost:3000', 'https://spikemultilanguage.toply.info', 'https://www.spikeslot.com', 'https://spikeslot.com'],
         methods: ["GET", "POST"]
     }
 })
