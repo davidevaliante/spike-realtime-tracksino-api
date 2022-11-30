@@ -94,9 +94,15 @@ router.get(
 	async (request: Request, response: Response) => {
 		try {
 			const { hours } = request.params
+
+			// console.time(hours)
+
 			const { stats, spinsInTimeFrame } = await getInitialPageData(
 				parseInt(hours)
 			)
+
+			// console.timeEnd(hours)
+
 			response.send({
 				stats,
 				spinsInTimeFrame,

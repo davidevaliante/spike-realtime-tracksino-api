@@ -6,12 +6,18 @@ import { createServer } from 'http'
 import { Server, Socket } from 'socket.io'
 import cors from 'cors'
 import cron from 'node-cron'
-import bodyParser from 'body-parser'
-import { SpinModel } from './mongoose-models/crazy-time/Spin'
 import { getLatestSpins, getStatsInTheLastHours } from './api/get'
 import { TimeFrame, timeFrameValueToHours } from './models/TimeFrame'
+import osu from 'node-os-utils'
 
 dotenv.config()
+const cpu = osu.cpu
+
+// cron.schedule('*/1 * * * * *', async () => {
+// 	cpu.usage().then(info => {
+// 		console.log(info)
+// 	})
+// })
 
 const app = express()
 
@@ -67,16 +73,15 @@ io.on('connection', (socket: Socket) => {
 })
 
 Object.values(TimeFrame).forEach(tf => {
-	cron.schedule('*/5 * * * * *', async () => {
-		const spins = await getLatestSpins(25)
-		const stats = await getStatsInTheLastHours(timeFrameValueToHours(tf))
-
-		io.to(tf).emit(tf, {
-			timeFrame: tf,
-			spins,
-			stats,
-		})
-	})
+	// cron.schedule('*/5 * * * * *', async () => {
+	// 	const spins = await getLatestSpins(25)
+	// 	const stats = await getStatsInTheLastHours(timeFrameValueToHours(tf))
+	// 	io.to(tf).emit(tf, {
+	// 		timeFrame: tf,
+	// 		spins,
+	// 		stats,
+	// 	})
+	// })
 })
 
 httpServer.listen(process.env.PORT || 4000, () => {
