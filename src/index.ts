@@ -8,10 +8,8 @@ import cors from 'cors'
 import cron from 'node-cron'
 import { getLatestSpins, getStatsInTheLastHours } from './api/get'
 import { TimeFrame, timeFrameValueToHours } from './models/TimeFrame'
-import osu from 'node-os-utils'
 
 dotenv.config()
-const cpu = osu.cpu
 
 // cron.schedule('*/1 * * * * *', async () => {
 // 	cpu.usage().then(info => {
