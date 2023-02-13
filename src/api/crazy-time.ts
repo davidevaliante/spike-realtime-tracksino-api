@@ -34,6 +34,7 @@ router.post('/write-spins', async (request: Request, response: Response) => {
 			upserted: bulkUpdate.upsertedCount,
 		})
 	} catch (e) {
+		console.log('ERROR WRITING')
 		response.send({ error: e })
 	}
 })
