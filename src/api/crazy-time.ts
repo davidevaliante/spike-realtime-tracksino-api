@@ -18,7 +18,7 @@ router.post('/write-spins', async (request: Request, response: Response) => {
 	try {
 		const list = request.body
 
-		console.log(list)
+		console.log(`new list first element: ${list[0]}`)
 		const bulkUpdate = await SpinModel.bulkWrite(
 			list.map((spin: Spin) => ({
 				updateOne: {
